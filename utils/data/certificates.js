@@ -4,7 +4,7 @@ export const certificatesData = [
       instituteName: "AWS",
       name: "AWS Certified Solutions Architect - Associate",
       link: "", 
-    },
+    }, 
     {
       id: 2,
       instituteName: "Udemy",
