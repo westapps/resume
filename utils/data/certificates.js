@@ -34,6 +34,5 @@ export const certificatesData = [
       instituteName: "Coursera",
       name: "Big Data Analysis with scala and Spark",
       link: "", 
-    },
-  
+    }
   ]

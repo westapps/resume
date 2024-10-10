@@ -2,11 +2,11 @@ export const personalData = {
     name: "Simon",
     profile: '/profile.png',
     designation: "Software Developer",
-    description: "My name is Simon. I am a professional and enthusiastic programmer. I am a quick learner with a self-learning attitude. I love to learn and explore new technologies and am passionate about problem-solving. I love almost all the stacks of web application development and love to make the web more open to the world.",
-    email: 'simon.***@gmail.com',
-    phone: '+04** *** ***',
+    description: "I’m Simon, a senior software developer with 5 years of experience in FinTech, specializing in AI integration, event-driven microservices, and real-time big data pipelines using AWS. I’m proficient in Scala, Node.js, Python, and AWS services, with a strong background in building scalable, fault-tolerant systems and working in agile teams.",
+    email: 'simon.fuxi.xie@gmail.com',
+    phone: '+0415 *** 789',
     address: 'Melbourne VIC Australia ',
-    github: 'https://github.com/',
-    linkedIn: 'https://www.linkedin.com/',
+    github: 'https://github.com/simonfuxixie',
+    linkedIn: 'https://www.linkedin.com/in/simon-fuxi-xie',
     resume: "https://drive.google.com/" // udpate url
   }

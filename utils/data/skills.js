@@ -1,20 +1,13 @@
 export const skillsData = [
- "Node",
- "Docker",
-"Javascript",
-"React",
-"Typescript",
-"Mongodb",
-"Postgresql",
-"Tensorflow",
-"Pytorch",
-"Java",
-"Scala",
-"Jenkins",
-"AWS"
-
-
-
-
+    "Node",
+    "React",
+    "Typescript",
+    "AWS",
+    "SQL",
+    "Python",
+    "Pytorch",
+    "Scala",
+    "Big Data",
+    "AI"
 ]
   
