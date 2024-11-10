@@ -14,7 +14,7 @@ pipeline {
         stage('Check Out Git Repo') {
             steps {
                 // Check out the code from GitHub
-                git branch: 'master', url: 'https://github.com/westapps/resume'
+                git branch: 'main', url: 'https://github.com/westapps/resume'
             }
         }
 
