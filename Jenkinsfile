@@ -55,7 +55,7 @@ pipeline {
                             docker pull $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG && \
                             docker stop $RESUME_REACT_APP_NAME || true && \
                             docker rm $RESUME_REACT_APP_NAME || true && \
-                            docker run -d -p 80:80 --name $RESUME_REACT_APP_NAME \
+                            docker run -d -p 80:3000 --name $RESUME_REACT_APP_NAME \  
                             $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG \
                         "
                     '''
