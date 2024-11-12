@@ -7,7 +7,7 @@ pipeline {
         IMAGE_REPO_NAME = "react/${RESUME_REACT_APP_NAME}"
         IMAGE_TAG = "latest"
         EC2_USER_AT_RESUME_UI_INSTANCE = 'ec2-user@ip-172-31-46-53.ap-southeast-2.compute.internal'
-        RESUME_UI_SSH_CREDENTIALS = 'resume-ec2-ssh-key-id'//todo: add this to jenkins credentials
+        RESUME_UI_SSH_CREDENTIALS = 'resume-ec2-ssh-key-id'
     }
 
     stages {
@@ -55,7 +55,7 @@ pipeline {
                             docker pull $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG && \
                             docker stop $RESUME_REACT_APP_NAME || true && \
                             docker rm $RESUME_REACT_APP_NAME || true && \
-                            docker run -d -p 3000:3000 --name $RESUME_REACT_APP_NAME \
+                            docker run -d -p 80:80 --name $RESUME_REACT_APP_NAME \
                             $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG \
                         "
                     '''
