@@ -50,6 +50,8 @@ pipeline {
                 sshagent (credentials: [RESUME_UI_SSH_CREDENTIALS]) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no $EC2_USER_AT_RESUME_UI_INSTANCE "\
+                            docker system prune -f && \
+                            docker volume prune -f && \
                             aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
                             docker login --username AWS --password-stdin $AWS_ECR_REGISTRY && \
                             docker pull $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG && \
