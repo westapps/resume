@@ -12,6 +12,7 @@ function ContactWithoutCaptcha() {
     email: '',
     message: '',
   });
+  const [messageSent, setMessageSent] = useState(false);
 
   const checkRequired = () => {
     if (userInput.email && userInput.message && userInput.name) {
@@ -45,6 +46,7 @@ function ContactWithoutCaptcha() {
       if (response.status === 200) {
         // Handle successful response
         console.log('Message sent successfully:', response.data);
+        setMessageSent(true);
       }
     } catch (error) {
       // Handle error
@@ -55,7 +57,7 @@ function ContactWithoutCaptcha() {
   return (
     <div className="">
       <p className="font-medium mb-5 text-[#16f2b3] text-xl uppercase">
-        Contact with me
+        Contact me
       </p>
       <div className="max-w-3xl text-white rounded-lg border border-[#464c6a] p-3 lg:p-5">
         <p className="text-sm text-[#d3d8e8]">
@@ -111,6 +113,11 @@ function ContactWithoutCaptcha() {
             {error.required &&
               <p className="text-sm text-red-400">
                 Email and Message are required!
+              </p>
+            }
+            {messageSent && 
+              <p className="text-sm text-red-500">
+                Message sent
               </p>
             }
             <button
