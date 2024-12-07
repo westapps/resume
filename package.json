@@ -1,6 +1,6 @@
 {
-  "name": "developer-portfolio",
-  "description": "Portfolio of Simon",
+  "name": "simon-resume",
+  "description": "Resume of Simon",
   "version": "0.1.0",
   "private": true,
   "scripts": {

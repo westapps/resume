@@ -1,6 +1,7 @@
 "use client";
 // @flow strict
 import { isValidEmail } from '@/utils/check-email';
+import axios from 'axios';
 import { useState } from 'react';
 import { TbMailForward } from "react-icons/tb";
 
@@ -29,7 +30,26 @@ function ContactWithoutCaptcha() {
       setError({ ...error, required: false });
     };
 
-    // write your email handler
+    try {
+      const response = await axios.post('http://52.63.242.109/api/v1/email/send?source=resume', {
+        name: userInput.name,
+        email: userInput.email,
+        message: userInput.message,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer 99e2e3b8-c89c-426b-b2ac-da0e18e9c9b2'
+        }
+      });
+
+      if (response.status === 200) {
+        // Handle successful response
+        console.log('Message sent successfully:', response.data);
+      }
+    } catch (error) {
+      // Handle error
+      console.error('Error sending message:', error);
+    }
   };
 
   return (
