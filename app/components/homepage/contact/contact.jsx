@@ -32,7 +32,7 @@ function ContactWithoutCaptcha() {
     };
 
     try {
-      const response = await axios.post('http://52.63.242.109/api/v1/email/send?source=resume', {
+      const response = await axios.post('http://resume.simonxie.net//api/v1/email/send?source=resume', {
         name: userInput.name,
         email: userInput.email,
         message: userInput.message,
