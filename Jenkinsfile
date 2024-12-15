@@ -8,6 +8,7 @@ pipeline {
         IMAGE_TAG = "latest"
         EC2_USER_AT_RESUME_UI_INSTANCE = 'ec2-user@ip-172-31-46-53.ap-southeast-2.compute.internal'
         RESUME_UI_SSH_CREDENTIALS = 'resume-ec2-ssh-key-id'
+        NEXT_PUBLIC_EMAIL_API_URL = 'http://ec2-52-63-242-109.ap-southeast-2.compute.amazonaws.com/api/v1'
     }
 
     stages {
@@ -32,7 +33,9 @@ pipeline {
             steps {
                 // Build the Docker image
                 sh '''
-                    docker build --network=host -t $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG .
+                    docker build --network=host \
+                        --build-arg NEXT_PUBLIC_EMAIL_API_URL=$NEXT_PUBLIC_EMAIL_API_URL \
+                        -t $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG .
                 '''
             }
         }
@@ -48,19 +51,22 @@ pipeline {
         stage('Deploy to EC2 Resume-UI instance') {
             steps {
                 sshagent (credentials: [RESUME_UI_SSH_CREDENTIALS]) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no $EC2_USER_AT_RESUME_UI_INSTANCE "\
-                            docker system prune -f && \
-                            docker volume prune -f && \
-                            aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
-                            docker login --username AWS --password-stdin $AWS_ECR_REGISTRY && \
-                            docker pull $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG && \
-                            docker stop $RESUME_REACT_APP_NAME || true && \
-                            docker rm $RESUME_REACT_APP_NAME || true && \
-                            docker run -d -p 80:80 --name $RESUME_REACT_APP_NAME \
-                            $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG \
-                        "
-                    '''
+                    withCredentials([string(credentialsId: 'EMAIL_API_KEY_SECRET', variable: 'EMAIL_API_KEY')]) {
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no $EC2_USER_AT_RESUME_UI_INSTANCE "\
+                                docker system prune -f && \
+                                docker volume prune -f && \
+                                aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+                                docker login --username AWS --password-stdin $AWS_ECR_REGISTRY && \
+                                docker pull $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG && \
+                                docker stop $RESUME_REACT_APP_NAME || true && \
+                                docker rm $RESUME_REACT_APP_NAME || true && \
+                                docker run -d -p 80:80 --name $RESUME_REACT_APP_NAME \
+                                -e EMAIL_API_KEY=${EMAIL_API_KEY} \
+                                $AWS_ECR_REGISTRY/$IMAGE_REPO_NAME:$IMAGE_TAG \
+                            "
+                        '''
+                    }
                 }
             }
         }

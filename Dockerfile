@@ -4,7 +4,7 @@ FROM node:18-alpine AS deps
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and yarn.lock (or package-lock.json) to install dependencies
+# Copy package.json and lock files to install dependencies
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
 # Install dependencies
@@ -19,6 +19,12 @@ COPY . .
 
 COPY --from=deps /app/node_modules ./node_modules
 
+# Accept build argument for the API URL
+ARG NEXT_PUBLIC_EMAIL_API_URL
+
+# Set environment variable for Next.js build
+ENV NEXT_PUBLIC_EMAIL_API_URL=${NEXT_PUBLIC_EMAIL_API_URL}
+
 # Build the Next.js app
 RUN yarn build
 
@@ -29,8 +35,7 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-# If using TypeScript, don't copy over the source code
-# COPY --from=builder /app/*.js ./
+# Copy built files from builder
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
