@@ -2,8 +2,11 @@
 // @flow strict
 import { isValidEmail } from '@/utils/check-email';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
 import { TbMailForward } from "react-icons/tb";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ContactWithoutCaptcha() {
   const [error, setError] = useState({ email: false, required: false });
@@ -13,6 +16,8 @@ function ContactWithoutCaptcha() {
     message: '',
   });
   const [messageSent, setMessageSent] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const successRef = useRef(null);
 
   const checkRequired = () => {
     if (userInput.email && userInput.message && userInput.name) {
@@ -31,28 +36,36 @@ function ContactWithoutCaptcha() {
       setError({ ...error, required: false });
     };
 
+    setIsSending(true);
     try {
-      const response = await axios.post('http://ec2-52-63-242-109.ap-southeast-2.compute.amazonaws.com/api/v1/email/send?source=resume', {
+      const response = await axios.post('/api/send-email', {
         name: userInput.name,
         email: userInput.email,
         message: userInput.message,
       }, {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer 99e2e3b8-c89c-426b-b2ac-da0e18e9c9b2'
+          'Content-Type': 'application/json'
         }
       });
 
       if (response.status === 200) {
-        // Handle successful response
-        console.log('Message sent successfully:', response.data);
+        toast.success("Message sent successfully!");
         setMessageSent(true);
+        setUserInput({ name: '', email: '', message: '' }); // Reset form fields
       }
     } catch (error) {
-      // Handle error
+      toast.error("Error sending message. Please try again.");
       console.error('Error sending message:', error);
+    } finally {
+      setIsSending(false);
     }
   };
+
+  useEffect(() => {
+    if (messageSent && successRef.current) {
+      successRef.current.focus();
+    }
+  }, [messageSent]);
 
   return (
     <div className="">
@@ -112,25 +125,28 @@ function ContactWithoutCaptcha() {
           <div className="flex flex-col items-center gap-2">
             {error.required &&
               <p className="text-sm text-red-400">
-                Email and Message are required!
-              </p>
-            }
-            {messageSent && 
-              <p className="text-sm text-red-500">
-                Message sent
+                Email, Name, and Message are required!
               </p>
             }
             <button
-              className="flex items-center gap-1 hover:gap-3 rounded-full bg-gradient-to-r from-pink-500 to-violet-600 px-5 md:px-12 py-2.5 md:py-3 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-white no-underline transition-all duration-200 ease-out hover:text-white hover:no-underline md:font-semibold"
+              className={`flex items-center gap-1 hover:gap-3 rounded-full bg-gradient-to-r from-pink-500 to-violet-600 px-5 md:px-12 py-2.5 md:py-3 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-white no-underline transition-all duration-200 ease-out hover:text-white hover:no-underline md:font-semibold ${isSending ? 'opacity-50 cursor-not-allowed' : ''}`}
               role="button"
               onClick={handleSendMail}
+              disabled={isSending}
             >
-              <span>Send Message</span>
+              <span>{isSending ? 'Sending...' : 'Send Message'}</span>
               <TbMailForward className="mt-1" size={18} />
             </button>
+            {messageSent && 
+              <div className="flex items-center text-green-500" role="alert" tabIndex="-1" ref={successRef}>
+                <FaCheckCircle className="mr-2" />
+                <p className="text-sm">Message sent successfully!</p>
+              </div>
+            }
           </div>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
     </div>
   );
 };
